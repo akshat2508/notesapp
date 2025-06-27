@@ -103,7 +103,7 @@ const handleSync = async () => {
   if (!user) {
     Toast.show({
       type: 'info',
-      position: 'bottom', // ✅ Show at bottom
+      position: 'bottom', 
       text1: 'Not Logged In',
       text2: 'Please log in to sync your notes',
     });
@@ -117,7 +117,7 @@ const handleSync = async () => {
 
     Toast.show({
       type: 'success',
-      position: 'bottom', // ✅ Show at bottom
+      position: 'bottom', 
       text1: 'Synced',
       text2: 'Notes synced successfully!',
     });
@@ -130,7 +130,7 @@ const handleSync = async () => {
 
     Toast.show({
       type: 'error',
-      position: 'bottom', // ✅ Show at bottom
+      position: 'bottom', 
       text1: 'Sync Failed',
       text2: message,
     });

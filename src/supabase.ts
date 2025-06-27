@@ -35,7 +35,7 @@ export const getCurrentUser = async () => {
   return { user, error };
 };
 
-// Notes CRUD operations
+
 export const createNote = async (note: Partial<Note>) => {
   const { data, error } = await supabase
     .from('notes')
@@ -72,13 +72,13 @@ export const deleteNote = async (id: string) => {
   return { error };
 };
 
-// Sync functions for offline support
+
 export const syncOfflineNotes = async (offlineNotes: Note[]) => {
   const results = [];
 
   for (const note of offlineNotes) {
     if (note.isOffline) {
-      // Remove invalid fields before syncing
+
       const { id, isOffline, localId, ...noteData } = note;
       const { data, error } = await createNote(noteData);
       results.push({ localId: note.localId, data, error });

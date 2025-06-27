@@ -7,7 +7,6 @@ export interface Note {
   tags: string | null;
   created_at: string;
   updated_at: string;
-  // Local-only fields for offline support
   isOffline?: boolean;
   localId?: string;
 }

@@ -6,7 +6,6 @@ import Toast from 'react-native-toast-message';
 import { store, checkAuthStatus, RootState, AppDispatch } from './src/store';
 import { AuthScreen } from './src/AuthScreen';
 import { NotesScreen } from './src/NotesScreen';
-// Add at the top of App.tsx
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['Possible Unhandled Promise Rejection']);
 
@@ -39,8 +38,7 @@ const AppContent: React.FC = () => {
     );
   }
 
-  // Allow access to NotesScreen even without authentication for offline mode
-  // User can still login later to sync their notes
+
   return user ? <NotesScreen /> : <AuthScreen />;
 };
 

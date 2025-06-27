@@ -45,7 +45,7 @@ export const AuthScreen: React.FC = () => {
   };
 
   const continueOffline = () => {
-    // This will be handled in App.tsx by not requiring auth
+
     Alert.alert('Offline Mode', 'User need to login first to save notes offline which then can be later synced to cloud.');
   };
 

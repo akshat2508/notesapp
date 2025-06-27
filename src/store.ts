@@ -1,4 +1,4 @@
-// src/store.ts
+
 import { configureStore, createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthState, NotesState, User, Note  } from './types';
@@ -13,7 +13,7 @@ import {
   syncOfflineNotes 
 } from './supabase';
 
-// Async thunks for auth
+
 export const loginUser = createAsyncThunk(
   'auth/login',
   async ({ email, password }: { email: string; password: string }) => {
@@ -44,33 +44,33 @@ export const checkAuthStatus = createAsyncThunk('auth/checkStatus', async () => 
   return user;
 });
 
-// Async thunks for notes
+
 export const loadNotes = createAsyncThunk('notes/load', async (_, { getState }) => {
   const state = getState() as any;
   const user = state.auth.user;
   
   if (!user) {
-    // Load offline notes only
+
     const stored = await AsyncStorage.getItem('notes');
     return stored ? JSON.parse(stored) : [];
   }
   
   try {
-    // Try to fetch from Supabase
+
     const { data, error } = await fetchNotes();
     if (error) throw new Error(error.message);
     
-    // Merge with offline notes
+
     const stored = await AsyncStorage.getItem('notes');
     const offlineNotes = stored ? JSON.parse(stored) : [];
     const onlineNotes = data || [];
     
-    // Filter out offline notes that might have been synced
+
     const filteredOfflineNotes = offlineNotes.filter((note: Note) => note.isOffline);
     
     return [...onlineNotes, ...filteredOfflineNotes];
   } catch (error) {
-    // If online fetch fails, return offline notes
+
     const stored = await AsyncStorage.getItem('notes');
     return stored ? JSON.parse(stored) : [];
   }
@@ -102,7 +102,7 @@ export const addNote = createAsyncThunk(
       }
     }
 
-    // Fallback to offline
+
     const timestamp = `offline_${Date.now()}`;
     return {
       ...note,
@@ -125,7 +125,7 @@ export const removeNote = createAsyncThunk(
         const { error } = await deleteNote(noteId);
         if (error) throw new Error(error.message);
       } catch (error) {
-        // If online delete fails, still remove locally
+
         console.log('Failed to delete online, removing locally');
       }
     }
@@ -135,33 +135,6 @@ export const removeNote = createAsyncThunk(
 );
 
 
-// export const syncNotes = createAsyncThunk('notes/sync', async (_, { getState }) => {
-//   const state = getState() as any;
-//   const user = state.auth.user;
-//   const notes = state.notes.notes;
-
-//   if (!user) throw new Error('User not authenticated');
-
-//   const offlineNotes = notes
-//   .filter((note: Note) => note.isOffline)
-//   .map((note: Note) => ({
-//     ...note,
-//     user_id: user.id, // fix user_id before syncing
-//   }));
-
-// const syncedNotes = await syncOfflineNotes(offlineNotes);
-// const syncedIds = syncedNotes.map((n) => n.localId);
-
-// const unsyncedNotes = notes.filter(
-//   (n: Note) => n.isOffline && !syncedIds.includes(n.localId)
-// );
-
-
-//   const { data: onlineNotes, error } = await fetchNotes();
-//   if (error) throw new Error();
-
-//   return [...(onlineNotes || []), ...unsyncedNotes];
-// });
 
 export const syncNotes = createAsyncThunk('notes/sync', async (_, { getState, rejectWithValue }) => {
   try {
@@ -190,14 +163,14 @@ export const syncNotes = createAsyncThunk('notes/sync', async (_, { getState, re
 
     return [...(onlineNotes || []), ...unsyncedNotes];
   } catch (err: any) {
-    // 👇 Prevent red box: return rejected value
+
     return rejectWithValue(err.message || 'Sync failed');
   }
 });
 
 
 
-// Auth slice
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -218,7 +191,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        // Ensure the user object has all required properties with proper types
+
         if (action.payload) {
           state.user = {
             ...action.payload,
@@ -238,7 +211,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        // Ensure the user object has all required properties with proper types
+
         if (action.payload) {
           state.user = {
             ...action.payload,
@@ -257,7 +230,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(checkAuthStatus.fulfilled, (state, action) => {
-        // Ensure the user object has all required properties with proper types
+
         if (action.payload) {
           state.user = {
             ...action.payload,
@@ -275,7 +248,7 @@ const authSlice = createSlice({
   },
 });
 
-// Notes slice
+
 const notesSlice = createSlice({
   name: 'notes',
   initialState: {
@@ -305,7 +278,7 @@ const notesSlice = createSlice({
       .addCase(loadNotes.fulfilled, (state, action) => {
         state.isLoading = false;
         state.notes = action.payload;
-        // Save to AsyncStorage
+
         AsyncStorage.setItem('notes', JSON.stringify(action.payload));
       })
       .addCase(loadNotes.rejected, (state, action) => {
@@ -314,7 +287,7 @@ const notesSlice = createSlice({
       })
       .addCase(addNote.fulfilled, (state, action) => {
         state.notes.unshift(action.payload);
-        // Save to AsyncStorage
+
         AsyncStorage.setItem('notes', JSON.stringify(state.notes));
       })
       .addCase(addNote.rejected, (state, action) => {
@@ -322,7 +295,7 @@ const notesSlice = createSlice({
       })
       .addCase(removeNote.fulfilled, (state, action) => {
         state.notes = state.notes.filter(note => note.id !== action.payload);
-        // Save to AsyncStorage
+
         AsyncStorage.setItem('notes', JSON.stringify(state.notes));
       })
       .addCase(syncNotes.pending, (state) => {
@@ -331,21 +304,18 @@ const notesSlice = createSlice({
       .addCase(syncNotes.fulfilled, (state, action) => {
         state.syncStatus = 'success';
         state.notes = action.payload;
-        // Save to AsyncStorage
+
         AsyncStorage.setItem('notes', JSON.stringify(action.payload));
       })
-    //   .addCase(syncNotes.rejected, (state, action) => {
-    //     state.syncStatus = 'error';
-    //     state.error = action.error.message || 'Sync failed';
-    //   });
+   
     .addCase(syncNotes.rejected, (state, action) => {
   state.syncStatus = 'error';
 
-  // Show error only if available
+
   if (action.error && action.error.message) {
     state.error = action.error.message;
   } else {
-    state.error = null; // ✅ suppress red box by clearing it
+    state.error = null; 
   }
 });
 
