@@ -2,9 +2,15 @@
 import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
+import Toast from 'react-native-toast-message';
 import { store, checkAuthStatus, RootState, AppDispatch } from './src/store';
 import { AuthScreen } from './src/AuthScreen';
 import { NotesScreen } from './src/NotesScreen';
+// Add at the top of App.tsx
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Possible Unhandled Promise Rejection']);
+
+
 
 const AppContent: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState(true);
@@ -40,9 +46,13 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <Provider store={store}>
-      <AppContent />
-    </Provider>
+   <Provider store={store}>
+  <View style={{ flex: 1 }}>
+    <AppContent />
+    <Toast />
+  </View>
+</Provider>
+
   );
 };
 

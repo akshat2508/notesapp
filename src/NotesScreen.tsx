@@ -13,6 +13,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import Toast from 'react-native-toast-message';
 import { RootState, AppDispatch } from './store';
 import { 
   addNote, 
@@ -21,7 +22,8 @@ import {
   syncNotes, 
   setSearchQuery, 
   logoutUser,
-  setSyncStatus 
+  setSyncStatus ,
+  clearNotesError
 } from './store';
 import { Note } from './types';
 
@@ -97,18 +99,45 @@ export const NotesScreen: React.FC = () => {
     );
   };
 
-  const handleSync = async () => {
-    if (!user) {
-      Alert.alert('Sync', 'Please log in to sync your notes');
-      return;
-    }
+const handleSync = async () => {
+  if (!user) {
+    Toast.show({
+      type: 'info',
+      position: 'bottom', // ✅ Show at bottom
+      text1: 'Not Logged In',
+      text2: 'Please log in to sync your notes',
+    });
+    return;
+  }
 
-    try {
-      await dispatch(syncNotes()).unwrap();
-    } catch (error: any) {
-      Alert.alert('Sync Error', error.message || 'Failed to sync notes');
-    }
-  };
+  try {
+    await dispatch(syncNotes()).unwrap(); 
+
+    dispatch(clearNotesError()); 
+
+    Toast.show({
+      type: 'success',
+      position: 'bottom', // ✅ Show at bottom
+      text1: 'Synced',
+      text2: 'Notes synced successfully!',
+    });
+  } catch (error: any) {
+    const message =
+      error.message?.includes('Network request failed') ||
+      error.message?.includes('Failed to fetch')
+        ? 'You are offline. Please connect to the internet to sync.'
+        : error.message || 'Something went wrong while syncing.';
+
+    Toast.show({
+      type: 'error',
+      position: 'bottom', // ✅ Show at bottom
+      text1: 'Sync Failed',
+      text2: message,
+    });
+  }
+};
+
+
 
   const handleLogout = () => {
     Alert.alert(

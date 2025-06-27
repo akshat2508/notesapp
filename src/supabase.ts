@@ -8,7 +8,7 @@ const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Auth functions
+
 export const signUp = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -36,7 +36,7 @@ export const getCurrentUser = async () => {
 };
 
 // Notes CRUD operations
-export const createNote = async (note: Omit<Note, 'id' | 'created_at' | 'updated_at'>) => {
+export const createNote = async (note: Partial<Note>) => {
   const { data, error } = await supabase
     .from('notes')
     .insert([note])
@@ -44,6 +44,7 @@ export const createNote = async (note: Omit<Note, 'id' | 'created_at' | 'updated
     .single();
   return { data, error };
 };
+
 
 export const fetchNotes = async () => {
   const { data, error } = await supabase
@@ -74,15 +75,17 @@ export const deleteNote = async (id: string) => {
 // Sync functions for offline support
 export const syncOfflineNotes = async (offlineNotes: Note[]) => {
   const results = [];
-  
+
   for (const note of offlineNotes) {
     if (note.isOffline) {
-      // Remove offline-specific fields before syncing
-      const { isOffline, localId, ...noteData } = note;
+      // Remove invalid fields before syncing
+      const { id, isOffline, localId, ...noteData } = note;
       const { data, error } = await createNote(noteData);
       results.push({ localId: note.localId, data, error });
     }
   }
-  
+
   return results;
 };
+
+
