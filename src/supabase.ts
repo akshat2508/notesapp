@@ -1,4 +1,4 @@
-// src/supabase.ts
+
 import 'react-native-url-polyfill/auto';
 import { createClient } from '@supabase/supabase-js';
 import { Note } from './types';

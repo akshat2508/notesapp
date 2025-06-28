@@ -1,4 +1,4 @@
-// App.tsx
+
 import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
