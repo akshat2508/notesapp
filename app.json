@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Notes App",
-    "slug": "notes-app",
-    "version": "1.0.0",
+    "name": "Secure Notes",
+    "slug": "notesapp",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,22 +16,23 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourcompany.notesapp"
+      "bundleIdentifier": "com.expo.notesapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.yourcompany.notesapp"
+      "package": "com.expo.notesapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "your-project-id"
+        "projectId": "c7064405-af0f-41f7-be48-ae29334db230"
       }
-    }
+    },
+    "owner": "akshat2508"
   }
 }
